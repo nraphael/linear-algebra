@@ -1,4 +1,6 @@
+from __future__ import division
 import itertools
+import math
 
 class Vector(object):
     def __init__(self, coordinates):
@@ -37,3 +39,19 @@ class Vector(object):
     def __div__(self,sclr):
         i = [sclr / n for n in self.coordinates]
         return Vector(i)
+
+    def magnitude(self):
+        v = [n ** 2 for n in self.coordinates]
+        s = math.fsum(v)
+        r = math.sqrt(s)
+        return(round(r,3))
+    
+    def direction(self):
+        magnitude = self.magnitude()
+        try:
+            sclr = 1. / math.fabs(magnitude)
+        except ZeroDivisionError:
+            raise Exceptiom("Cannot normalize the zero vector")
+
+        return(sclr * self)
+
