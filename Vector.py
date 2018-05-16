@@ -46,7 +46,7 @@ class Vector(object):
         r = math.sqrt(s)
         return(round(r,3))
     
-    def direction(self):
+    def normalized(self):
         magnitude = self.magnitude()
         try:
             sclr = 1. / math.fabs(magnitude)
@@ -55,3 +55,20 @@ class Vector(object):
 
         return(sclr * self)
 
+    def dot(self, v):
+        z = zip(self.coordinates,v.coordinates)
+        #i = itertools.starmap(lambda x,y: x * y,z)
+        i = [ x * y for x,y in z ]
+        s = math.fsum(i)
+        return(s)
+
+    def angle_with(self,v,inDegrees= False):
+        dotproduct = self.dot(v)
+        magnitude1 = self.magnitude()
+        magnitude2 = v.magnitude()
+        try:
+            angle = math.acos(dotproduct / (magnitude1 * magnitude2))
+        except ZeroDivisionError:
+            raise Exception("Cannot computer an angle with the zero vector")
+        return(angle if not inDegrees else math.degrees(angle))
+      
