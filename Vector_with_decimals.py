@@ -6,6 +6,8 @@ from fractions import gcd
 
 getcontext().prec = 30
 
+DEBUG = False
+
 class Vector(object):
     def __init__(self, coordinates):
         try:
@@ -76,32 +78,41 @@ class Vector(object):
         magnitude1 = self.magnitude()
         magnitude2 = v.magnitude()
         try:
-            angle = math.acos(dotproduct / (magnitude1 * magnitude2))
-        except ZeroDivisionError:
-            raise Exception("Cannot computer an angle with the zero vector")
-        return(angle if not inDegrees else math.degrees(angle))
-      
-    def parallel_to(self,v):
-        try:
-            lcms = [m/n for m,n in zip(self.coordinates,v.coordinates)]
-            s = set(lcms)
-            return len(s) == 1
+            prec = getcontext().prec
+            getcontext().prec = 10
+            angle_in_radians = math.acos(dotproduct / (magnitude1 * magnitude2))
+            getcontext().prec = prec
         except Exception as e:
-            print(str(e))
-            raise e
-
-    def is_zero(self):
-        for d in self.coordinates:
-            if d != 0:
-                return False
-        return True
-    `
-
-
-    def orthogonal_to(self,v):
+            print(e)
+            raise Exception("Cannot computer an angle with the zero vector")
+        return(angle_in_radians if not inDegrees else math.degrees(angle_in_radians))
+      
+    def is_parallel_to(self,v):
         if self.is_zero() or v.is_zero():
             return True
-        if self.dot(v) == 0
+        # instructor then has
+        return (self.angle_with(v) == 0 or self.angle_with(v) == Decimal(math.pi))
+#        try:
+#            lcms = [m/n for m,n in zip(self.coordinates,v.coordinates)]
+#            s = set(lcms)
+#            if DEBUG:
+#                print("lcms = %s" % lcms)
+#            # Do vectors have the same lowest common multiplier?
+#            return len(s) == 1
+#        except Exception as e:
+#            print(str(e))
+#            raise e
+
+    def is_zero(self,tolerance=1e-10):
+            return self.magnitude() < tolerance
+
+    def is_orthogonal_to(self,v, tolerance=1e-10):
+        if self.is_zero() or v.is_zero():
+            return True
+        if DEBUG:
+            print("Ortho testing: %s" % self.dot(v))
+        if abs(self.dot(v)) < tolerance:
+        #if self.dot(v) == 0:
             return True
         else:
             return False
